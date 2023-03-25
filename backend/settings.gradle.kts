@@ -1,0 +1,1 @@
+rootProject.name = "com.github.plplmax.chat.unicorn-team-chat"
