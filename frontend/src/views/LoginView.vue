@@ -11,8 +11,8 @@ const password = ref('')
 const passwordError = ref('')
 
 const validateLogin = (value) => (!value ? 'Login is empty' : '')
-const updateLoginError = (value) => (loginError.value = validateLogin(value))
 const validatePassword = (value) => (!value ? 'Password is empty' : '')
+const updateLoginError = (value) => (loginError.value = validateLogin(value))
 const updatePasswordError = (value) => (passwordError.value = validatePassword(value))
 
 const submit = () => {
