@@ -1,0 +1,26 @@
+version: '3.4'
+services:
+  postgres:
+    image: postgres:15.2-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: unicorn
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  pgadmin:
+    image: dpage/pgadmin4:7.0
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@unicorn.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+    ports:
+      - '5430:80'
+
+volumes:
+  postgres_data:
+  pgadmin_data:
