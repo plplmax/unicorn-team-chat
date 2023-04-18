@@ -21,10 +21,14 @@
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 
   --gray-dark: #2c2c2e;
+  --blue: #007aff;
 }
 
 /* semantic color variables for this project */
 :root {
+  --color-primary: var(--blue);
+  --color-on-primary: var(--vt-c-white);
+
   --color-background: var(--vt-c-white);
   --color-on-background: var(--gray-dark);
   --color-background-soft: var(--vt-c-white-soft);
