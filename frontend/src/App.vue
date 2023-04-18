@@ -1,5 +1,6 @@
 <script setup>
 import HeaderItem from './components/common/HeaderItem.vue'
+import LoginView from '@/views/LoginView.vue'
 </script>
 
 <template>
@@ -7,5 +8,7 @@ import HeaderItem from './components/common/HeaderItem.vue'
     <HeaderItem />
   </header>
 
-  <main></main>
+  <main>
+    <LoginView />
+  </main>
 </template>
