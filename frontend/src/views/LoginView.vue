@@ -14,6 +14,7 @@ const validateLogin = (value) => (!value ? 'Login is empty' : '')
 const updateLoginError = (value) => (loginError.value = validateLogin(value))
 const validatePassword = (value) => (!value ? 'Password is empty' : '')
 const updatePasswordError = (value) => (passwordError.value = validatePassword(value))
+
 const submit = () => {
   updateLoginError(login.value)
   updatePasswordError(password.value)
@@ -27,16 +28,16 @@ watch(password, (value) => updatePasswordError(value))
   <form class="form" @submit.prevent="submit">
     <InputWrapper>
       <template #input>
-        <InputItem v-model="login" :error="loginError" label="Login" id="login" name="login" />
+        <InputItem id="login" v-model="login" :error="loginError" label="Login" name="login" />
       </template>
     </InputWrapper>
     <InputWrapper>
       <template #input>
         <InputItem
+          id="password"
           v-model="password"
           :error="passwordError"
           label="Password"
-          id="password"
           name="password"
           type="password"
         />
