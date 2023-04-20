@@ -5,14 +5,14 @@ package com.github.plplmax.chat.user
  */
 class UserRepositoryImpl : UserRepository {
     override fun userById(id: Int): User? {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 
     override fun userByUsername(username: String): User? {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 
     override fun createdUser(user: UnauthorizedUser): User {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 }

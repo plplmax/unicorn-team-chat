@@ -6,9 +6,9 @@ package com.github.plplmax.chat.auth
  */
 class EncodedPasswordOf(private val password: String) : EncodedPassword {
     override val value: String
-        get() = TODO("Not yet implemented")
+        get() = throw NotImplementedError()
 
     override fun matches(password: String): Boolean {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 }
