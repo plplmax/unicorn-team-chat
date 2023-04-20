@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UnauthorizedUser(private val username: String, private val password: String) {
-    fun asAuthorized(authorization: Authorization): Result<User> {
+    suspend fun asAuthorized(authorization: Authorization): Result<User> {
         return authorization.authorized(username, password)
     }
 }
