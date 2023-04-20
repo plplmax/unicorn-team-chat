@@ -1,14 +1,22 @@
 package com.github.plplmax.chat.auth
 
+import com.github.plplmax.chat.user.UnauthorizedUser
+import com.github.plplmax.chat.user.UserRepositoryImpl
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-/**
- * @todo #5:30m Implement authentication routes. Should be ability
- * to log in with username and password. The raw password that passed
- * from a user should be hashed and compared with the hashed password
- * from the database. If the hashed passwords are equal than we should
- * provide the user some token/session identifier to authenticate the
- * following requests.
- */
 fun Route.authRoutes() {
+    val authorization = AuthorizationImpl(UserRepositoryImpl())
+    post("/auth") {
+        call.receive<UnauthorizedUser>()
+            .asAuthorized(authorization)
+            .onSuccess {
+                // @todo #5:15m Should be returned UserIdPrincipal or something like.
+            }.onFailure {
+                call.respond(HttpStatusCode.Unauthorized, it.localizedMessage ?: "Unknown error")
+            }
+    }
 }

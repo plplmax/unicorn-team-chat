@@ -1,3 +1,11 @@
 package com.github.plplmax.chat.user
 
-data class UnauthorizedUser(val username: String, val password: String)
+import com.github.plplmax.chat.auth.Authorization
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class UnauthorizedUser(private val username: String, private val password: String) {
+    fun asAuthorized(authorization: Authorization): Result<User> {
+        return authorization.authorized(username, password)
+    }
+}
