@@ -1,5 +1,6 @@
 package com.github.plplmax.chat
 
+import com.github.plplmax.chat.db.UnicornDatabase
 import com.github.plplmax.chat.plugins.configureRouting
 import com.github.plplmax.chat.plugins.configureSerialization
 import com.github.plplmax.chat.plugins.configureSockets
@@ -13,6 +14,7 @@ fun main() {
 }
 
 fun Application.module() {
+    UnicornDatabase.init()
     configureSockets()
     configureSerialization()
     configureRouting()

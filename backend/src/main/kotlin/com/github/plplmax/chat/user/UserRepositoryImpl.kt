@@ -1,18 +1,32 @@
 package com.github.plplmax.chat.user
 
-/**
- * @todo #5:15m Implement the user repository. Use the Exposed library.
- */
-class UserRepositoryImpl : UserRepository {
-    override fun userById(id: Int): User? {
-        throw NotImplementedError()
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+
+class UserRepositoryImpl(
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : UserRepository {
+    override suspend fun userById(id: Int): User? {
+        return newSuspendedTransaction(ioDispatcher) {
+            Users.select { Users.id eq id }.singleOrNull()?.toUser()
+        }
     }
 
-    override fun userByUsername(username: String): User? {
-        throw NotImplementedError()
+    override suspend fun userByUsername(username: String): User? {
+        return newSuspendedTransaction(ioDispatcher) {
+            Users.select { Users.username eq username }.singleOrNull()?.toUser()
+        }
     }
 
-    override fun createdUser(user: UnauthorizedUser): User {
-        throw NotImplementedError()
+    override suspend fun createdUser(username: String, password: String): User {
+        return newSuspendedTransaction(ioDispatcher) {
+            Users.insertAndGetId {
+                it[Users.username] = username
+                it[Users.password] = password
+            }.value
+        }.let { id -> userById(id)!! }
     }
 }
