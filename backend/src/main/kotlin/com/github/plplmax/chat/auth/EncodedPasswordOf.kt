@@ -1,14 +1,16 @@
 package com.github.plplmax.chat.auth
 
-/**
- * @todo #5:15m Implement encoding password and matching encoded passwords.
- * It's recommended to use some cutting-edge library for this.
- */
-class EncodedPasswordOf(private val password: String) : EncodedPassword {
-    override val value: String
-        get() = throw NotImplementedError()
+import de.mkammerer.argon2.Argon2
+import de.mkammerer.argon2.Argon2Factory
 
-    override fun matches(password: String): Boolean {
-        throw NotImplementedError()
+class EncodedPasswordOf(private val password: CharArray) : EncodedPassword {
+    override val value: String by lazy { argon.hash(10, 65536, 1, password) }
+
+    override fun matches(hash: String): Boolean {
+        return argon.verify(hash, password)
+    }
+
+    private companion object {
+        val argon: Argon2 = Argon2Factory.create()
     }
 }

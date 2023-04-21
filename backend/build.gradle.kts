@@ -3,6 +3,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val exposedVersion: String by project
 val postgresqlVersion: String by project
+val argonVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.8.10"
@@ -33,4 +34,5 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresqlVersion")
+    implementation ("de.mkammerer:argon2-jvm:$argonVersion")
 }

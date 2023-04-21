@@ -4,7 +4,7 @@ import com.github.plplmax.chat.user.User
 import com.github.plplmax.chat.user.UserRepository
 
 class AuthorizationImpl(private val repository: UserRepository) : Authorization {
-    override suspend fun authorized(username: String, password: String): Result<User> {
+    override suspend fun authorized(username: String, password: CharArray): Result<User> {
         val encodedPassword = EncodedPasswordOf(password)
         val exception = IllegalArgumentException("Incorrect username or password")
         return repository.userByUsername(username)?.let { user ->
