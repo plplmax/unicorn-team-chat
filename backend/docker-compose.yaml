@@ -17,7 +17,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: pgadmin@unicorn.com
       PGADMIN_DEFAULT_PASSWORD: root
     volumes:
-      - pgadmin_data:/root/.pgadmin
+      - pgadmin_data:/var/lib/pgadmin
     ports:
       - '5430:80'
 
