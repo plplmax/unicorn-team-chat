@@ -4,6 +4,7 @@ import InputWrapper from '@/components/common/InputWrapper.vue'
 import { ref, watch } from 'vue'
 import ButtonItem from '@/components/common/ButtonItem.vue'
 import ButtonWrapper from '@/components/common/ButtonWrapper.vue'
+import * as authService from '@/services/auth.service'
 
 const login = ref('')
 const loginError = ref('')
@@ -18,6 +19,17 @@ const updatePasswordError = (value) => (passwordError.value = validatePassword(v
 const submit = () => {
   updateLoginError(login.value)
   updatePasswordError(password.value)
+
+  if (!loginError.value && !passwordError.value) {
+    authService
+      .authenticate(login.value, password.value)
+      .then(() => {
+        // @todo #4:15m Redirect to the chat screen.
+      })
+      .catch(() => {
+        // @todo #4:15m Show an error message when authentication failed.
+      })
+  }
 }
 
 watch(login, (value) => updateLoginError(value))
