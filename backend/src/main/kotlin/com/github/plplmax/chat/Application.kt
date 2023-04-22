@@ -1,10 +1,7 @@
 package com.github.plplmax.chat
 
 import com.github.plplmax.chat.db.UnicornDatabase
-import com.github.plplmax.chat.plugins.configureAuthentication
-import com.github.plplmax.chat.plugins.configureRouting
-import com.github.plplmax.chat.plugins.configureSerialization
-import com.github.plplmax.chat.plugins.configureSockets
+import com.github.plplmax.chat.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -16,6 +13,7 @@ fun main() {
 
 fun Application.module() {
     UnicornDatabase.init()
+    configureCors()
     configureAuthentication()
     configureSockets()
     configureSerialization()
