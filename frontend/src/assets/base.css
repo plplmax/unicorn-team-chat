@@ -74,6 +74,7 @@
 }
 
 html {
+  /* @todo #45:15m Increase font-size value on the high-density screens */
   font-size: 62.5%;
 }
 
