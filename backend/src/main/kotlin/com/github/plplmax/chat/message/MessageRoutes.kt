@@ -1,43 +1,36 @@
 package com.github.plplmax.chat.message
 
-import com.github.plplmax.chat.auth.jwt.JwtConfig
+import com.github.plplmax.chat.auth.jwt.DecodedJwtOf
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withTimeout
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.util.Collections
+import java.util.*
 
 fun Route.messageRoutes() {
     val repository = MessageRepositoryImpl()
-    val connections = Collections.synchronizedSet<Connection>(mutableSetOf())
+    val connections = Collections.synchronizedSet<WebSocketServerSession>(mutableSetOf())
     route("/message") {
         authenticate {
             get { call.respond(repository.messages()) }
         }
         webSocket {
-            val userId: Int
-            withTimeout(5000) {
-                val token = incoming.receive() as Frame.Text
-                val decoded = JwtConfig.verifier.verify(token.readText())
-                userId = decoded.subject.toInt()
+            val user = withTimeout(5000) {
+                val frame = incoming.receive() as Frame.Text
+                DecodedJwtOf(frame.readText()).user
             }
-            val thisConnection = Connection(userId, this)
-            connections += thisConnection
+            connections += this
             try {
                 while (isActive) {
                     when (val action = receiveDeserialized<MessageAction>()) {
                         is MessageAction.Add -> {
-                            val message = action.added(userId, repository)
-                            val response = MessageAction.Result.Added(message)
-                            connections.forEach { it.send(Json.encodeToString<MessageAction.Result>(response)) }
+                            val message = action.added(user.id, repository)
+                            val response: MessageAction.Result = MessageAction.Result.Added(message)
+                            connections.forEach { it.sendSerialized(response) }
                         }
 
                         is MessageAction.Edit -> send(Frame.Text("edit"))
@@ -45,11 +38,9 @@ fun Route.messageRoutes() {
                     }
                 }
             } catch (e: Exception) {
-                currentCoroutineContext().ensureActive()
-                println(e.printStackTrace())
-                send("error occurred")
+                e.printStackTrace()
             } finally {
-                connections -= thisConnection
+                connections -= this
             }
         }
     }
