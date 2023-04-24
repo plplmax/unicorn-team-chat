@@ -5,6 +5,8 @@ import * as messageService from '@/services/message.service'
 
 const messages = ref([])
 
+// @todo #46:15m Implement error handling when the fetching messages failed.
+//  It's recommended to add the ability to retry request by the user.
 onBeforeMount(() => {
   messageService.getMessages().then((response) => (messages.value = response))
 })
