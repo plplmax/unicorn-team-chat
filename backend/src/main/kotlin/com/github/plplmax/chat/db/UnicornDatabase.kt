@@ -1,5 +1,6 @@
 package com.github.plplmax.chat.db
 
+import com.github.plplmax.chat.message.Messages
 import com.github.plplmax.chat.user.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -10,6 +11,6 @@ object UnicornDatabase {
         val driverClassName = "org.postgresql.Driver"
         val jdbcURL = "jdbc:postgresql://localhost:5432/unicorn"
         val database = Database.connect(jdbcURL, driverClassName, "root", "root")
-        transaction(database) { SchemaUtils.create(Users) }
+        transaction(database) { SchemaUtils.create(Users, Messages) }
     }
 }
