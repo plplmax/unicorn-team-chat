@@ -1,20 +1,26 @@
 <script setup>
 import MessageItem from '@/components/chat/MessageItem.vue'
+import { onBeforeMount, ref } from 'vue'
+import * as messageService from '@/services/message.service'
+
+const messages = ref([])
+
+// @todo #46:15m Implement error handling when the fetching messages failed.
+//  It's recommended to add the ability to retry request by the user.
+onBeforeMount(() => {
+  messageService.getMessages().then((response) => (messages.value = response))
+})
 </script>
 
 <template>
   <div class="message-container">
     <MessageItem
-      author="Janet"
-      message="That works. I was actually planning to get a smoothie anyways 👍"
-      time="12:03 PM"
+      v-for="message in messages"
+      :key="message.id"
+      :author="message.sender"
+      :message="message.message"
+      :time="message.date"
     />
-    <MessageItem :self="true" author="Maks" message="Agreed" time="11:52 AM" />
-    <MessageItem author="Aubrey" message="I was thinking the cafe downtown" time="11:45 AM" />
-    <MessageItem :self="true" author="Maks" message="I am down for whatever!" time="11:36 AM" />
-    <MessageItem author="Jav" message="I’m down! Any ideas??" time="11:35 AM" />
-    <MessageItem :self="true" author="Maks" message="Anyone on for lunch today" time="11:31 AM" />
-    <MessageItem :self="true" author="Maks" message="Hi team 👋" time="11:31 AM" />
   </div>
 </template>
 
