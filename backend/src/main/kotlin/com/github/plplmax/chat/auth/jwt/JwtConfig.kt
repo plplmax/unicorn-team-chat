@@ -13,6 +13,5 @@ object JwtConfig {
     val verifier: JWTVerifier = JWT.require(algorithm)
         .withIssuer(ISSUER)
         .withAudience(AUDIENCE)
-        .acceptExpiresAt(VALIDITY_IN_MS)
         .build()
 }
