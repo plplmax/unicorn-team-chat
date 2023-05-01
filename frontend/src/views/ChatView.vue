@@ -21,11 +21,11 @@ onBeforeMount(() => {
   messageService
     .getMessages()
     .then((response) => (messages.value = response))
-    .catch(() => toaster.error('Cannot load history. Reload the page'))
     .then(() => {
       const token = localStorage.getItem('token')
       messageService.connect(token, (message) => messages.value.unshift(message))
     })
+    .catch(() => toaster.error('Cannot load history. Reload the page'))
 })
 onBeforeUnmount(() => messageService.disconnect())
 </script>
