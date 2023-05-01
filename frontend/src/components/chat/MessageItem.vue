@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { ref } from 'vue'
+
+const props = defineProps({
   self: {
     type: Boolean,
     default: false
@@ -15,15 +17,36 @@ defineProps({
   time: {
     type: String,
     required: true
+  },
+  editable: {
+    type: Boolean,
+    required: true
+  },
+  onEdit: {
+    type: Function,
+    required: true
   }
 })
+defineEmits(['update:editable'])
+
+// @todo #48:15m When a message is edited and the user wants to edit the same message,
+//  user sees an outdated content in the textarea. Maybe we can use computed() here?
+const editedMessage = ref(props.message)
 </script>
 
 <template>
   <div :class="{ message: true, 'message-left': !self, 'message-right': self }">
     <p v-if="!self" class="author">{{ author }}</p>
     <div class="content-wrapper">
-      <p class="content">{{ message }}</p>
+      <p v-if="!editable" class="content">{{ message }}</p>
+      <textarea
+        v-else
+        v-model="editedMessage"
+        autofocus
+        class="content"
+        @keyup.esc="$emit('update:editable', false)"
+        @keyup.exact.enter="onEdit(editedMessage)"
+      />
       <p class="time">{{ time }}</p>
     </div>
   </div>

@@ -15,10 +15,9 @@ export const connect = (token, added, edited, deleted) => {
     const parsedData = JSON.parse(event.data)
     const type = parsedData.type
     if (type === 'add') {
-      added({
-        ...parsedData.data,
-        date: toZonedTime(parsedData.data.date)
-      })
+      added(toMessage(parsedData.data))
+    } else if (type === 'edit') {
+      edited(toMessage(parsedData.data))
     } else {
       console.error('undefined type of message: ' + type)
     }
@@ -40,6 +39,12 @@ export const add = (message) => {
   return true
 }
 
+export const update = (id, message) => {
+  if (!socket || socket.readyState !== WebSocket.OPEN) return false
+  socket.send(JSON.stringify({ type: 'edit', id, message }))
+  return true
+}
+
 export const disconnect = () => {
   console.log('Disconnect initiated by the user')
   if (socket) socket.close()
@@ -49,7 +54,7 @@ export const disconnect = () => {
 
 export const getMessages = () => {
   return axios.get('/message').then((response) => {
-    return response.data.map((message) => ({ ...message, date: toZonedTime(message.date) }))
+    return response.data.map((response) => toMessage(response))
   })
 }
 
@@ -61,3 +66,9 @@ export const toZonedTime = (dateString) => {
     minute: '2-digit'
   })
 }
+
+const toMessage = (response) => ({
+  ...response,
+  editable: false,
+  date: toZonedTime(response.date)
+})
