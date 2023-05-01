@@ -57,7 +57,9 @@ onBeforeUnmount(() => messageService.disconnect())
 }
 
 .message-input {
-  position: absolute;
+  max-width: 60rem;
+  position: fixed;
+  margin: auto;
   left: 0;
   right: 0;
   bottom: 0;
