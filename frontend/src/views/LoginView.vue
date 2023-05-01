@@ -5,6 +5,12 @@ import { ref, watch } from 'vue'
 import ButtonItem from '@/components/common/ButtonItem.vue'
 import ButtonWrapper from '@/components/common/ButtonWrapper.vue'
 import * as authService from '@/services/auth.service'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+
+const router = useRouter()
+const toast = useToast()
 
 const login = ref('')
 const loginError = ref('')
@@ -23,12 +29,8 @@ const submit = () => {
   if (!loginError.value && !passwordError.value) {
     authService
       .authenticate(login.value, password.value)
-      .then(() => {
-        // @todo #4:15m Redirect to the chat screen.
-      })
-      .catch(() => {
-        // @todo #4:15m Show an error message when authentication failed.
-      })
+      .then(() => router.push('/chat'))
+      .catch((error) => toast.error(error.response.data, { timeout: 3000 }))
   }
 }
 
