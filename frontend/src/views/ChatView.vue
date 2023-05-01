@@ -3,11 +3,13 @@ import { onBeforeMount, onBeforeUnmount, ref } from 'vue'
 import * as messageService from '@/services/message.service'
 import MessageItem from '@/components/chat/MessageItem.vue'
 import MessageInput from '@/components/chat/MessageInput.vue'
+import { useToast } from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 
+const toaster = useToast()
 const messages = ref([])
 const messageForSending = ref('')
 const userId = parseInt(localStorage.getItem('userId'))
-
 const sendMessage = () => {
   const message = messageForSending.value.trim()
   if (!message) return
@@ -15,12 +17,11 @@ const sendMessage = () => {
   if (added) messageForSending.value = ''
 }
 
-// @todo #46:15m Implement error handling when the fetching messages failed.
-//  It's recommended to add the ability to retry request by the user.
 onBeforeMount(() => {
   messageService
     .getMessages()
     .then((response) => (messages.value = response))
+    .catch(() => toaster.error('Cannot load history. Reload the page'))
     .then(() => {
       const token = localStorage.getItem('token')
       messageService.connect(token, (message) => messages.value.unshift(message))
