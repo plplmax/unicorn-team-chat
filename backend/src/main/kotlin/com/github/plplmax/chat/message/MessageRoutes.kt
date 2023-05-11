@@ -39,7 +39,10 @@ fun Route.messageRoutes() {
                                 connections.forEach { it.sendSerialized(response) }
                             }.onFailure { throw it }
                         }
-                        is MessageAction.Delete -> send(Frame.Text("delete"))
+                        is MessageAction.Delete -> {
+                            val result: MessageAction.Result = action.delete(user.id, repository)
+                            connections.forEach { it.sendSerialized(result) }
+                        }
                     }
                 }
             } catch (e: Exception) {

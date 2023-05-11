@@ -18,6 +18,8 @@ export const connect = (token, added, edited, deleted) => {
       added(toMessage(parsedData.data))
     } else if (type === 'edit') {
       edited(toMessage(parsedData.data))
+    } else if (type === 'delete') {
+      deleted(parsedData.id)
     } else {
       console.error('undefined type of message: ' + type)
     }
@@ -42,6 +44,12 @@ export const add = (message) => {
 export const update = (id, message) => {
   if (!socket || socket.readyState !== WebSocket.OPEN) return false
   socket.send(JSON.stringify({ type: 'edit', id, message }))
+  return true
+}
+
+export const _delete = (id) => {
+  if (!socket || socket.readyState !== WebSocket.OPEN) return false
+  socket.send(JSON.stringify({ type: 'delete', id }))
   return true
 }
 

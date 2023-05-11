@@ -11,7 +11,7 @@ const userId = parseInt(localStorage.getItem('userId'))
 
 const messages = ref([])
 const messageForSending = ref('')
-const currentEditingMessage = ref(0)
+const focusedMessageId = ref(0)
 
 const showMenu = ref(false)
 const position = ref({ left: 0, top: 0 })
@@ -26,20 +26,23 @@ const sendMessage = () => {
 const updateMessage = (message) => {
   const trimmed = message.trim()
   if (!trimmed) return
-  const updated = messageService.update(currentEditingMessage.value, trimmed)
+  const updated = messageService.update(focusedMessageId.value, trimmed)
   if (updated) stopEditingMessage()
 }
 
 const startEditingMessage = () => {
-  messages.value.find((value) => value.id === currentEditingMessage.value).editable = true
+  messages.value.find((value) => value.id === focusedMessageId.value).editable = true
 }
 
 const stopEditingMessage = () => {
-  messages.value.find((value) => value.id === currentEditingMessage.value).editable = false
+  messages.value.find((value) => value.id === focusedMessageId.value).editable = false
 }
+
+const deleteMessage = () => messageService._delete(focusedMessageId.value)
+
 const showContextMenu = (event, messageId, self) => {
   if (!self) return
-  currentEditingMessage.value = messageId
+  focusedMessageId.value = messageId
   position.value.left = event.clientX
   position.value.top = event.clientY - 50
   showMenu.value = true
@@ -59,6 +62,10 @@ onBeforeMount(() => {
         (message) => {
           const index = messages.value.findIndex((value) => value.id === message.id)
           messages.value.splice(index, 1, message)
+        },
+        (messageId) => {
+          const index = messages.value.findIndex((value) => value.id === messageId)
+          messages.value.splice(index, 1)
         }
       )
     })
@@ -91,7 +98,7 @@ onUnmounted(() => document.removeEventListener('click', hideContextMenu))
     class="context-menu"
   >
     <li @click="startEditingMessage()">Edit</li>
-    <li>Delete</li>
+    <li @click="deleteMessage()">Delete</li>
   </ul>
 </template>
 
