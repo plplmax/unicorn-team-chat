@@ -36,4 +36,15 @@ class MessageRepositoryImpl(
             }.value
         }.let { id -> messageById(id)!! }
     }
+
+    override suspend fun updatedMessage(id: Int, message: String): Message {
+        return newSuspendedTransaction(ioDispatcher) {
+            Messages.update({ Messages.id eq id }) {
+                it[Messages.message] = message
+            }
+        }.let { count ->
+            require(count == 1) { "Something went wrong while updating the message with id = $id" }
+            messageById(id)!!
+        }
+    }
 }
