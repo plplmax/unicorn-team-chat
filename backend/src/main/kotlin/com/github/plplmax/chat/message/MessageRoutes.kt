@@ -33,7 +33,12 @@ fun Route.messageRoutes() {
                             connections.forEach { it.sendSerialized(response) }
                         }
 
-                        is MessageAction.Edit -> send(Frame.Text("edit"))
+                        is MessageAction.Edit -> {
+                            action.edited(user.id, repository).onSuccess { message ->
+                                val response: MessageAction.Result = MessageAction.Result.Edited(message)
+                                connections.forEach { it.sendSerialized(response) }
+                            }.onFailure { throw it }
+                        }
                         is MessageAction.Delete -> send(Frame.Text("delete"))
                     }
                 }

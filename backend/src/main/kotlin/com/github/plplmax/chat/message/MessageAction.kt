@@ -22,7 +22,14 @@ sealed class MessageAction {
 
     @Serializable
     @SerialName("edit")
-    data class Edit(private val id: Int, private val message: String) : MessageAction()
+    data class Edit(private val id: Int, private val message: String) : MessageAction() {
+        suspend fun edited(sender: Int, repository: MessageRepository): kotlin.Result<Message> {
+            return repository.messageById(id)?.let { dbMessage ->
+                if (dbMessage.senderId != sender) return kotlin.Result.failure(IllegalStateException("You cannot delete this message"))
+                repository.updatedMessage(id, message).let { kotlin.Result.success(it) }
+            } ?: kotlin.Result.failure(IllegalArgumentException("Undefined message with ID = $id"))
+        }
+    }
 
     @Serializable
     @SerialName("delete")
@@ -33,5 +40,9 @@ sealed class MessageAction {
         @Serializable
         @SerialName("add")
         data class Added(private val data: Message) : Result()
+
+        @Serializable
+        @SerialName("edit")
+        data class Edited(private val data: Message) : Result()
     }
 }
