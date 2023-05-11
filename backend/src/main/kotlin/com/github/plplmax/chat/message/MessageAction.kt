@@ -33,7 +33,15 @@ sealed class MessageAction {
 
     @Serializable
     @SerialName("delete")
-    data class Delete(private val id: Int) : MessageAction()
+    data class Delete(private val id: Int) : MessageAction() {
+        suspend fun delete(sender: Int, repository: MessageRepository): Result.Deleted {
+            return repository.messageById(id)?.let { message ->
+                if (message.senderId != sender) error("You cannot delete this message")
+                repository.delete(message.id)
+                Result.Deleted(message.id)
+            } ?: error("Message not found with id = $id")
+        }
+    }
 
     @Serializable
     sealed class Result {
@@ -44,5 +52,9 @@ sealed class MessageAction {
         @Serializable
         @SerialName("edit")
         data class Edited(private val data: Message) : Result()
+
+        @Serializable
+        @SerialName("delete")
+        data class Deleted(private val id: Int) : Result()
     }
 }

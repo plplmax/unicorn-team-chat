@@ -4,6 +4,7 @@ import com.github.plplmax.chat.user.Users
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDateTime
 
@@ -45,6 +46,12 @@ class MessageRepositoryImpl(
         }.let { count ->
             require(count == 1) { "Something went wrong while updating the message with id = $id" }
             messageById(id)!!
+        }
+    }
+
+    override suspend fun delete(id: Int) {
+        newSuspendedTransaction(ioDispatcher) {
+            require(Messages.deleteWhere { Messages.id eq id } > 0) { "Nothing to delete" }
         }
     }
 }
