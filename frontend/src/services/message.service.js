@@ -66,17 +66,13 @@ export const getMessages = () => {
   })
 }
 
-export const toZonedTime = (dateString) => {
+export const toZonedDateTime = (dateString) => {
   const date = new Date(dateString)
-  const zonedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000)
-  return zonedDate.toLocaleTimeString('en-us', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000)
 }
 
 const toMessage = (response) => ({
   ...response,
   editable: false,
-  date: toZonedTime(response.date)
+  date: toZonedDateTime(response.date)
 })

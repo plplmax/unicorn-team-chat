@@ -50,6 +50,22 @@ const showContextMenu = (event, messageId, self) => {
 
 const hideContextMenu = () => (showMenu.value = false)
 
+const needDateSeparator = (index) => {
+  if (index === messages.value.length - 1) return true
+
+  const currentDate = messages.value[index].date
+  const previousDate = messages.value[index + 1].date
+  return currentDate.toDateString() !== previousDate.toDateString()
+}
+
+const formatDateSeparator = (date) => date.toLocaleDateString()
+
+const extractTime = (date) =>
+  date.toLocaleTimeString('en-us', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+
 onBeforeMount(() => {
   messageService
     .getMessages()
@@ -78,17 +94,20 @@ onUnmounted(() => document.removeEventListener('click', hideContextMenu))
 
 <template>
   <div class="message-container">
-    <MessageItem
-      v-for="message in messages"
-      :key="message.id"
-      v-model:editable="message.editable"
-      :author="message.sender"
-      :message="message.message"
-      :on-edit="updateMessage"
-      :self="message.senderId === userId"
-      :time="message.date"
-      @contextmenu.prevent="showContextMenu($event, message.id, message.senderId === userId)"
-    />
+    <template v-for="(message, index) in messages" :key="message.id">
+      <MessageItem
+        v-model:editable="message.editable"
+        :author="message.sender"
+        :message="message.message"
+        :on-edit="updateMessage"
+        :self="message.senderId === userId"
+        :time="extractTime(message.date)"
+        @contextmenu.prevent="showContextMenu($event, message.id, message.senderId === userId)"
+      />
+      <h2 class="date-separator" v-if="needDateSeparator(index)">
+        {{ formatDateSeparator(message.date) }}
+      </h2>
+    </template>
     <MessageInput v-model="messageForSending" :send="sendMessage" class="message-input" />
   </div>
   <ul
@@ -146,5 +165,15 @@ li:hover {
 
 .context-menu li:hover {
   cursor: pointer;
+}
+
+.date-separator {
+  text-align: center;
+  color: #666668;
+  padding: 2rem 0 0.8rem 0;
+}
+
+.date-separator:last-of-type {
+  padding: 0;
 }
 </style>
