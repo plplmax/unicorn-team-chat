@@ -8,3 +8,7 @@ export const authenticate = (username, password) => {
     return response
   })
 }
+
+export const register = (username, password, confirmedPassword) => {
+  return axios.post('/register', { username, password, confirmedPassword })
+}

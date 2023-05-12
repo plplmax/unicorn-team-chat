@@ -16,26 +16,63 @@ const login = ref('')
 const loginError = ref('')
 const password = ref('')
 const passwordError = ref('')
+const confirmedPassword = ref('')
+const confirmedPasswordError = ref('')
 
-const validateLogin = (value) => (!value ? 'Login is empty' : '')
-const validatePassword = (value) => (!value ? 'Password is empty' : '')
+const validateLogin = (value) => {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return 'Login is required'
+  }
+
+  const minInclusive = 4
+  const maxInclusive = 12
+  if (!(trimmed.length >= minInclusive && trimmed.length <= maxInclusive)) {
+    return `Username should be from ${minInclusive} to ${maxInclusive} characters`
+  }
+
+  return ''
+}
+const validatePassword = (value) => {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return 'Password is required'
+  }
+
+  const minInclusive = 6
+  const maxInclusive = 8
+  if (!(trimmed.length >= minInclusive && trimmed.length <= maxInclusive)) {
+    return `Password should be from ${minInclusive} to ${maxInclusive} characters`
+  }
+
+  return ''
+}
+const validateConfirmedPassword = (value) =>
+  value !== password.value ? 'Passwords do not match' : ''
 const updateLoginError = (value) => (loginError.value = validateLogin(value))
 const updatePasswordError = (value) => (passwordError.value = validatePassword(value))
+const updateConfirmedPasswordError = (value) =>
+  (confirmedPasswordError.value = validateConfirmedPassword(value))
 
 const submit = () => {
   updateLoginError(login.value)
   updatePasswordError(password.value)
+  updateConfirmedPasswordError(confirmedPassword.value)
 
-  if (!loginError.value && !passwordError.value) {
+  if (!loginError.value && !passwordError.value && !confirmedPasswordError.value) {
     authService
-      .authenticate(login.value, password.value)
-      .then(() => router.push('/chat'))
+      .register(login.value, password.value, confirmedPassword.value)
+      .then(() => {
+          toast.success("Account have been created. Use your credentials to log in")
+          router.push('/')
+      })
       .catch((error) => toast.error(error.response.data, { timeout: 3000 }))
   }
 }
 
 watch(login, (value) => updateLoginError(value))
 watch(password, (value) => updatePasswordError(value))
+watch(confirmedPassword, (value) => updateConfirmedPasswordError(value))
 </script>
 
 <template>
@@ -57,14 +94,24 @@ watch(password, (value) => updatePasswordError(value))
         />
       </template>
     </InputWrapper>
+    <InputWrapper>
+      <template #input>
+        <InputItem
+          id="confirmed-password"
+          v-model="confirmedPassword"
+          :error="confirmedPasswordError"
+          label="Confirm password"
+          name="confirmed-password"
+          type="password"
+        />
+      </template>
+    </InputWrapper>
     <ButtonWrapper>
       <template #button>
-        <ButtonItem text="Login" type="submit" />
+        <ButtonItem text="Register" type="submit" />
       </template>
     </ButtonWrapper>
-    <router-link class="alternative-action" to="/registration"
-      >Does not have an account?</router-link
-    >
+      <router-link class="alternative-action" to="/">Already have an account?</router-link>
   </form>
 </template>
 
