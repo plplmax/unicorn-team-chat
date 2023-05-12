@@ -16,7 +16,7 @@ instance.interceptors.response.use(
       localStorage.clear()
       router.replace('/')
     }
-    return error
+    return Promise.reject(error)
   }
 )
 
