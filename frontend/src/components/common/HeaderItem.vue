@@ -6,7 +6,7 @@
 
 <style scoped>
 .header {
-  padding: 2.4rem 0;
+  padding: 2.4em 0;
   box-shadow: inset 0 -0.1rem 0 #e5e5ea;
 }
 

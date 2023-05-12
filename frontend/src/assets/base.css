@@ -74,7 +74,6 @@
 }
 
 html {
-  /* @todo #45:15m Increase font-size value on the high-density screens */
   font-size: 62.5%;
 }
 
@@ -83,3 +82,22 @@ body {
   background: var(--color-background);
   font-family: 'Abel', sans-serif;
 }
+
+@media (min-width: 1440px) {
+  html {
+    font-size: 100.5%;
+  }
+}
+
+@media (min-width: 2560px) {
+  html {
+    font-size: 150.5%;
+  }
+}
+
+@media (max-width: 425px) {
+  .header {
+    font-size: 0.7rem;
+  }
+}
+
