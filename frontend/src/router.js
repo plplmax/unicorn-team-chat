@@ -12,6 +12,14 @@ const routes = [
     path: '/chat',
     component: ChatView,
     beforeEnter: () => (!localStorage.getItem('token') ? '/' : true)
+  },
+  {
+    path: '/logout',
+    component: LoginView,
+    beforeEnter: () => {
+      localStorage.clear()
+      return '/'
+    }
   }
 ]
 
